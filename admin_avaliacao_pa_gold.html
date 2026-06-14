@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Avaliações PA GOLD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', Arial, sans-serif;
+            background: linear-gradient(135deg, #0A2A4A 0%, #00AECC 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0A2A4A 0%, #00AECC 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #F5F5F5;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #00AECC;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0A2A4A;
+            margin: 10px 0;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #00AECC;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0090B0;
+        }
+
+        .btn-secondary {
+            background: #F5A623;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #E59000;
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background: #0A2A4A;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid #00AECC;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        tr:hover {
+            background: #F5F5F5;
+        }
+
+        .funcao-badge {
+            background: #E0F2FE;
+            color: #0369A1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .score-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score {
+            min-width: 25px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .score.bad {
+            background: #EF4444;
+        }
+
+        .score.neutral {
+            background: #F59E0B;
+        }
+
+        .score.good {
+            background: #10B981;
+        }
+
+        .average-row {
+            background: #F0F8FF;
+            font-weight: bold;
+            color: #0A2A4A;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0A2A4A;
+            margin-bottom: 15px;
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .respostas-detail {
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .resposta-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #F5F5F5;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .resposta-pergunta {
+            font-weight: bold;
+            color: #0A2A4A;
+            margin-bottom: 4px;
+        }
+
+        .resposta-valor {
+            color: #666;
+        }
+
+        .footer {
+            background: #F5F5F5;
+            padding: 20px 30px;
+            border-top: 1px solid #E0E0E0;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Painel Administrativo</h1>
+            <p>Avaliações de Clima Organizacional - PA GOLD</p>
+        </div>
+
+        <div class="content">
+            <!-- Estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total de Respostas</div>
+                    <div class="stat-value" id="totalRespostas">0</div>
+                    <div class="stat-desc">formulários preenchidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Média Geral</div>
+                    <div class="stat-value" id="mediaGeral">-</div>
+                    <div class="stat-desc">das todas as perguntas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Última Resposta</div>
+                    <div class="stat-value" id="ultimaResposta">-</div>
+                    <div class="stat-desc">tempo desde agora</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Áreas Respondentes</div>
+                    <div class="stat-value" id="totalAreas">0</div>
+                    <div class="stat-desc">funções/cargos diferentes</div>
+                </div>
+            </div>
+
+            <!-- Controles -->
+            <div class="controls">
+                <button class="btn btn-primary" onclick="exportarCSV()">📥 Exportar CSV</button>
+                <button class="btn btn-primary" onclick="exportarJSON()">📥 Exportar JSON</button>
+                <button class="btn btn-secondary" onclick="abrirAnalise()">📈 Análise Detalhada</button>
+                <button class="btn btn-danger" onclick="confirmarLimpeza()">🗑️ Limpar Dados</button>
+            </div>
+
+            <!-- Tabela -->
+            <div id="tableContainer"></div>
+        </div>
+
+        <div class="footer">
+            <p>Painel atualizado em tempo real • Os dados são armazenados localmente no navegador</p>
+        </div>
+    </div>
+
+    <!-- Modal de Resposta Detalhada -->
+    <div id="detalhesModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="fecharModalDetalhes()">&times;</span>
+            <div class="modal-title">Detalhes da Avaliação</div>
+            <div id="modalDetalhesConteudo"></div>
+        </div>
+    </div>
+
+    <script>
+        const perguntas = [
+            { id: 1, texto: "Você considera seu Coordenador imediato um verdadeiro líder?", secao: 1 },
+            { id: 2, texto: "Você considera seu Gerente um verdadeiro líder?", secao: 1 },
+            { id: 3, texto: "De 0 a 10, como você avalia a sua disposição para o dia a dia?", secao: 1 },
+            { id: 4, texto: "Em relação à marca da P.A Gold...", secao: 2 },
+            { id: 5, texto: "Tenho oportunidades de desenvolver minhas habilidades na P.A Gold?", secao: 2 },
+            { id: 6, texto: "A P.A Gold recompensa e reconhece seus colaboradores de forma justa?", secao: 2 },
+            { id: 7, texto: "O quanto você está satisfeito com as normas e regras do seu trabalho?", secao: 2 },
+            { id: 8, texto: "Como você vê a evolução da sua carreira dentro da P.A Gold?", secao: 2 },
+            { id: 9, texto: "Você se sente valorizado pela P.A Gold?", secao: 2 },
+            { id: 10, texto: "O quanto você se sente atraído pelas possibilidades de crescimento na P.A Gold?", secao: 2 },
+            { id: 11, texto: "Quando começo o meu dia de trabalho, penso que...", secao: 3 },
+            { id: 12, texto: "O quanto você se identifica com a missão da P.A Gold?", secao: 3 },
+            { id: 13, texto: "Você se identifica com os valores da P.A Gold?", secao: 3 },
+            { id: 14, texto: "A empresa incentiva que você explore novas ideias?", secao: 3 },
+            { id: 15, texto: "Quando dou uma nova ideia na P.A Gold, qual a chance de ser implementada?", secao: 3 },
+            { id: 16, texto: "Com que frequência você recebe informações sobre seu desempenho no trabalho?", secao: 3 },
+            { id: 17, texto: "Você confia em sua liderança imediata?", secao: 3 },
+            { id: 18, texto: "Como você avalia o grau de discriminação na P.A Gold?", secao: 3 },
+            { id: 19, texto: "O quanto você recomenda os produtos e serviços da sua empresa?", secao: 4 },
+            { id: 20, texto: "Conversando com amigos, eu sempre falo que a P.A Gold é uma ótima instituição", secao: 4 },
+            { id: 21, texto: "Sinto-me orgulhoso e recomendo a P.A Gold para amigos que estão procurando emprego", secao: 4 },
+            { id: 22, texto: "Eu não pediria demissão da P.A Gold se recebesse uma proposta melhor", secao: 4 },
+            { id: 23, texto: "Eu dificilmente penso em deixar a P.A Gold para trabalhar em outro lugar", secao: 4 },
+            { id: 24, texto: "A P.A Gold inspira o melhor em mim todos os dias", secao: 4 },
+            { id: 25, texto: "A P.A Gold me motiva a ir além do que é pedido para realizar meu trabalho", secao: 4 },
+            { id: 26, texto: "Minha área possui os recursos, processos e suporte necessários para executar", secao: 5 },
+            { id: 27, texto: "A interação e colaboração entre colegas de trabalho ocorre de forma positiva", secao: 5 },
+            { id: 28, texto: "A comunicação e relacionamento com minha supervisão imediata são satisfatórios", secao: 5 },
+            { id: 29, texto: "As mudanças implementadas na manutenção são positivas para a área", secao: 5 },
+            { id: 30, texto: "Estou confiante de que a manutenção conseguirá melhorar seus resultados atuais", secao: 5 },
+            { id: 31, texto: "Um planejamento adequado e alinhamento entre operação, manutenção e PCM", secao: 5 },
+            { id: 32, texto: "As novas diretrizes estabelecidas para a manutenção contribuirão para melhoria", secao: 5 },
+            { id: 33, texto: "Reconheço que minhas ações e decisões impactam diretamente os resultados", secao: 5 },
+        ];
+
+        function carregarDados() {
+            const respostas = JSON.parse(localStorage.getItem('todasRespostas') || '[]');
+            return respostas;
+        }
+
+        function atualizarPainel() {
+            const respostas = carregarDados();
+            
+            // Estatísticas
+            document.getElementById('totalRespostas').textContent = respostas.length;
+
+            if (respostas.length === 0) {
+                document.getElementById('tableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>Nenhuma resposta ainda</h3>
+                        <p>As respostas aparecerão aqui assim que forem enviadas</p>
+                    </div>
+                `;
+                document.getElementById('mediaGeral').textContent = '-';
+                document.getElementById('ultimaResposta').textContent = '-';
+                document.getElementById('totalAreas').textContent = '0';
+                return;
+            }
+
+            // Calcular média geral
+            let somaTotal = 0;
+            let contagemRespostas = 0;
+            respostas.forEach(r => {
+                Object.values(r.respostas).forEach(v => {
+                    somaTotal += v;
+                    contagemRespostas++;
+                });
+            });
+            const media = (somaTotal / contagemRespostas).toFixed(1);
+            document.getElementById('mediaGeral').textContent = media;
+
+            // Última resposta
+            const ultima = new Date(respostas[respostas.length - 1].timestamp);
+            const agora = new Date();
+            const diff = Math.floor((agora - ultima) / 1000 / 60); // em minutos
+            if (diff < 1) {
+                document.getElementById('ultimaResposta').textContent = 'Agora';
+            } else if (diff < 60) {
+                document.getElementById('ultimaResposta').textContent = `${diff}m atrás`;
+            } else {
+                document.getElementById('ultimaResposta').textContent = ultima.toLocaleTimeString('pt-BR');
+            }
+
+            // Total de áreas
+            const areas = new Set(respostas.map(r => r.funcao));
+            document.getElementById('totalAreas').textContent = areas.size;
+
+            // Montar tabela
+            let html = '<table><thead><tr><th>#</th><th>Função</th><th>Respostas</th><th>Média</th><th>Timestamp</th><th>Ações</th></tr></thead><tbody>';
+
+            respostas.forEach((r, idx) => {
+                let somaRespostas = 0;
+                let countRespostas = Object.keys(r.respostas).length;
+                Object.values(r.respostas).forEach(v => somaRespostas += v);
+                const mediaResposta = (somaRespostas / countRespostas).toFixed(1);
+                const data = new Date(r.timestamp).toLocaleString('pt-BR');
+
+                html += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td><span class="funcao-badge">${r.funcao || 'Não informado'}</span></td>
+                        <td>${countRespostas}/33</td>
+                        <td><strong>${mediaResposta}</strong></td>
+                        <td>${data}</td>
+                        <td>
+                            <button class="btn btn-primary" style="font-size: 11px; padding: 6px 10px;" 
+                                    onclick="abrirModalDetalhes(${r.id})">Ver Detalhes</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Linha de média
+            html += '<tr class="average-row"><td colspan="2">MÉDIA GERAL</td><td>-</td><td>' + media + '</td><td colspan="2">-</td></tr>';
+            
+            html += '</tbody></table>';
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        function abrirModalDetalhes(id) {
+            const respostas = carregarDados();
+            const resposta = respostas.find(r => r.id === id);
+            
+            if (!resposta) return;
+
+            let html = `
+                <p><strong>Função:</strong> ${resposta.funcao || 'Não informado'}</p>
+                <p><strong>Data/Hora:</strong> ${new Date(resposta.timestamp).toLocaleString('pt-BR')}</p>
+                <div class="respostas-detail">
+            `;
+
+            Object.keys(resposta.respostas).sort((a, b) => {
+                return parseInt(a.replace('P', '')) - parseInt(b.replace('P', ''));
+            }).forEach(key => {
+                const valor = resposta.respostas[key];
+                const pergunta = perguntas.find(p => p.id === parseInt(key.replace('P', '')));
+                let scoreClass = '';
+                if (valor <= 3) scoreClass = 'bad';
+                else if (valor <= 6) scoreClass = 'neutral';
+                else scoreClass = 'good';
+
+                html += `
+                    <div class="resposta-item">
+                        <div class="resposta-pergunta">${key}. ${pergunta ? pergunta.texto : 'Pergunta desconhecida'}</div>
+                        <div class="resposta-valor">
+                            <span class="score ${scoreClass}">${valor}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            document.getElementById('modalDetalhesConteudo').innerHTML = html;
+            document.getElementById('detalhesModal').style.display = 'block';
+        }
+
+        function fecharModalDetalhes() {
+            document.getElementById('detalhesModal').style.display = 'none';
+        }
+
+        function exportarCSV() {
+            const respostas = carregarDados();
+            if (respostas.length === 0) {
+                alert('Nenhuma resposta para exportar');
+                return;
+            }
+
+            let csv = 'ID,Função,Data/Hora';
+            
+            // Header com perguntas
+            for (let i = 1; i <= 33; i++) {
+                csv += `,P${i}`;
+            }
+            csv += '\n';
+
+            // Dados
+            respostas.forEach((r, idx) => {
+                csv += `${r.id},"${r.funcao || 'Não informado'}","${new Date(r.timestamp).toLocaleString('pt-BR')}"`;
+                for (let i = 1; i <= 33; i++) {
+                    const chave = Object.keys(r.respostas).find(k => k === i || k === `P${i}`);
+                    const valor = chave ? r.respostas[chave] : '';
+                    csv += `,${valor}`;
+                }
+                csv += '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `avaliacao_pa_gold_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function exportarJSON() {
+            const respostas = carregarDados();
+            if (respostas.length === 0) {
+                alert('Nenhuma resposta para exportar');
+                return;
+            }
+
+            const data = {
+                exportDate: new Date().toISOString(),
+                totalRespostas: respostas.length,
+                data: respostas
+            };
+
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `avaliacao_pa_gold_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function confirmarLimpeza() {
+            if (confirm('⚠️ Tem certeza? Isso apagará TODOS os dados e não pode ser desfeito!')) {
+                if (confirm('Confirmar novamente: deseja realmente apagar todos os dados?')) {
+                    localStorage.removeItem('todasRespostas');
+                    atualizarPainel();
+                    alert('Dados foram apagados');
+                }
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detalhesModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Atualizar painel inicialmente e a cada 5 segundos
+        atualizarPainel();
+        setInterval(atualizarPainel, 5000);
+    </script>
+</body>
+</html>
